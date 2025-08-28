@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockFlow - Login</title>
+    <link rel="shortcut icon" href="./img/carrinho-de-compras.png" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen flex flex-col lg:flex-row"
+    style="background: linear-gradient(135deg, #d9dfff 0%, #0b7350  100%);">
+
+    <div class="flex flex-col justify-center items-center p-16 w-full lg:w-1/2 text-white">
+        <h1 class="text-6xl font-extrabold mb-6 text-teal-900">StockFlow</h1>
+        <p class="text-xl mb-8 text-center max-w-md leading-relaxed">
+            Gerencie o estoque do seu negócio de forma simples, visual e segura, direto do navegador, sem complicações.
+        </p>
+    </div>
+
+    <div class="flex flex-col justify-center items-center w-full lg:w-1/2 p-16 text-white">
+        <div class="bg-white bg-opacity-20 backdrop-blur-md shadow-lg rounded-xl w-full max-w-lg p-12">
+            <h2 class="text-3xl font-bold text-center text-white mb-8">Acesse sua conta</h2>
+
+            <form id="loginForm" class="space-y-8">
+                <div>
+                    <label for="email" class="block text-lg font-medium text-white mb-2">E-mail</label>
+                    <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com"
+                        class="w-full px-5 py-3 border border-white bg-transparent rounded-lg text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-lg"
+                        required />
+                </div>
+
+                <div>
+                    <label for="senha" class="block text-sm font-medium text-white mb-1">Senha</label>
+                    <input type="password" id="senha" name="senha" placeholder="••••••••"
+                        class="w-full px-5 py-3 border border-white bg-transparent rounded-lg text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-lg"
+                        required />
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-white bg-opacity-90 text-teal-700 py-3 rounded-lg font-semibold hover:bg-opacity-100 transition-colors text-lg">
+                    Entrar
+                </button>
+            </form>
+
+            <div class="flex justify-center items-center mt-8 text-base text-white">
+                <button onclick="abrirModal('modalCadastro')">Cadastre-se</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cadastro -->
+    <div id="modalCadastro" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-8 relative">
+            <button onclick="fecharModal('modalCadastro')"
+                class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold"
+                aria-label="Fechar modal">
+                &times;
+            </button>
+            <h3 class="text-2xl font-semibold mb-6 text-teal-700">Cadastro de Usuário</h3>
+
+            <form id="formCadastro" class="space-y-5">
+                <input type="text" id="nomeCadastro" placeholder="Nome completo"
+                    class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    required />
+                <input type="email" id="emailCadastro" placeholder="E-mail"
+                    class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    required />
+                <input type="text" id="cpfCadastro" placeholder="CPF (somente números)" maxlength="11"
+                    class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    required />
+                <input type="date" id="nascimentoCadastro"
+                    class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    required />
+                <input type="password" id="senhaCadastro" placeholder="Senha"
+                    class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    required />
+
+                <input type="password" id="confirmaSenhaCadastro" placeholder="Confirmar senha"
+                    class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    required />
+
+                <button type="submit"
+                    class="w-full bg-teal-600 text-white py-3 rounded-lg font-semibold hover:bg-teal-700 transition">
+                    Cadastrar
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+
+    <script>
+        function abrirModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function fecharModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        document.getElementById("formCadastro").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById("nomeCadastro").value;
+            const email = document.getElementById("emailCadastro").value;
+            const cpf = document.getElementById("cpfCadastro").value;
+            const password = document.getElementById("senhaCadastro").value;
+            const confirmPassword = document.getElementById("confirmaSenhaCadastro").value;
+
+            try {
+                const response = await fetch("http://localhost:3000/auth/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, cpf, password, confirmPassword }),
+                });
+
+                const data = await response.json();
+                console.log(data);
+
+                if (response.ok) {
+                    alert("Cadastro realizado com sucesso!");
+                    fecharModal("modalCadastro");
+
+                    document.getElementById("formCadastro").reset();
+                } else {
+                    alert("Erro: " + data.msg);
+                }
+            } catch (error) {
+                alert("Erro na conexão com o servidor");
+            }
+        });
+
+        // Lógica de login
+        document.getElementById("loginForm").addEventListener("submit", async function (e) {
+            e.preventDefault(); 
+
+            const email = document.getElementById("email").value;
+            const senha = document.getElementById("senha").value;
+
+            try {
+                const response = await fetch("http://localhost:3000/auth/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password: senha })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem("token", data.token); 
+                    alert("Login realizado com sucesso!");
+
+                    if (data.role === "admin") {
+                        window.location.href = "estoque.html"; 
+                    } else {
+                        window.location.href = "loja.html"; 
+                    }
+                } else {
+                    alert("Erro: " + data.msg);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Erro de conexão com o servidor.");
+            }
+        });
+
+
+    </script>
+</body>
+
+</html>
