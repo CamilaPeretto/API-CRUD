@@ -1,4 +1,3 @@
-
 const Produto = require('../models/Produto');
 
 exports.getDashboard = async (req, res) => {

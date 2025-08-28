@@ -13,7 +13,7 @@ async function connectDB() {
     console.log("Conectou ao banco de dados!");
   } catch (error) {
     console.error("Erro ao conectar no banco:", error);
-    throw error; 
+    throw error;
   }
 }
 

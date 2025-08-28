@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require('path');
 const cors = require("cors");
 const connectDB = require("./config/db");
 
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'front'))); 
 
 app.get("/", (req, res) => {
   res.send("API CRUD de Produtos");
@@ -21,6 +23,7 @@ app.use("/produtos", produtoRoutes);
 app.use('/user', userRoutes);
 app.use('/auth', authRoutes);
 app.use('/admin', adminRoutes);
+app.use("/uploads", express.static("uploads"));
 
 async function startServer() {
   try {

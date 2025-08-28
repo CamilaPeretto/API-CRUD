@@ -36,16 +36,19 @@ exports.getAll = async (req, res) => {
 
 exports.create = async (req, res) => {
   const { nome, descricao, preco, estoque, categoria } = req.body;
+  const imagem = req.file ? req.file.filename : null;
 
   try {
-    console.log("Tentando salvar produto:", { nome, descricao, preco, estoque, categoria });
-    const novoProduto = new Produto({ nome, descricao, preco, estoque, categoria });
+    console.log("Tentando salvar produto:", { nome, descricao, preco, estoque, categoria, imagem });
+    const novoProduto = new Produto({ nome, descricao, preco, estoque, categoria, imagem });
     await novoProduto.save();
     console.log("Produto salvo com sucesso:", novoProduto);
 
     // Envia e-mail para o admin (não trava o cadastro)
     enviarEmail(process.env.ADMIN_EMAIL, "Produto adicionado ao estoque",
-      `<h2>Novo Produto Adicionado!</h2><p>Produto <strong>${nome}</strong> adicionado com sucesso ao estoque.</p>`
+      `<h2>Novo Produto Adicionado!</h2>
+       <p>Produto <strong>${nome}</strong> adicionado com sucesso ao estoque.</p>
+       ${imagem ? `<p>Imagem: <strong>${imagem}</strong></p>` : ''}`
     ).catch(err => console.error("Erro ao enviar email para admin:", err));
 
     // Envia e-mail para os usuários
@@ -53,11 +56,14 @@ exports.create = async (req, res) => {
     const emailsUsuarios = usuarios.map(u => u.email);
     if (emailsUsuarios.length > 0) {
       enviarEmail(emailsUsuarios.join(","), "Novo produto na loja!",
-        `<h2>Novidade na Loja!</h2><p>Um novo produto foi adicionado: <strong>${nome}</strong>. Confira!</p>`
+        `<h2>Novidade na Loja!</h2>
+         <p>Um novo produto foi adicionado: <strong>${nome}</strong>. Confira!</p>
+         ${imagem ? `<p>Imagem: <strong>${imagem}</strong></p>` : ''}`
       ).catch(err => console.error("Erro ao enviar email para usuarios:", err));
     }
 
     res.status(201).json(novoProduto);
+
   } catch (erro) {
     console.error("Erro ao salvar produto:", erro);
     res.status(500).json({ erro: "Erro ao cadastrar produto." });
