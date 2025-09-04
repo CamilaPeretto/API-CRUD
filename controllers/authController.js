@@ -48,11 +48,11 @@ exports.login = async (req, res) => {
 
   try {
     const token = jwt.sign(
-      { id: user._id, name: user.name, role: user.role },
+      { id: user._id, role: user.role }, 
       process.env.SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: "1h" }
     );
-
+    
     res.status(200).json({ msg: 'Autenticado com sucesso', token, role: user.role });
   } catch (error) {
     res.status(500).json({ msg: 'Erro ao gerar token' });

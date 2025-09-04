@@ -35,12 +35,15 @@ exports.getAll = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
+  console.log("REQ.BODY:", req.body);
+  console.log("REQ.FILE:", req.file);
+  
   const { nome, descricao, preco, estoque, categoria } = req.body;
-  const imagem = req.file ? req.file.filename : null;
+  const image = req.file ? req.file.filename : null;
 
   try {
-    console.log("Tentando salvar produto:", { nome, descricao, preco, estoque, categoria, imagem });
-    const novoProduto = new Produto({ nome, descricao, preco, estoque, categoria, imagem });
+    console.log("Tentando salvar produto:", { nome, descricao, preco, estoque, categoria, image });
+    const novoProduto = new Produto({ nome, descricao, preco, estoque, categoria, image });
     await novoProduto.save();
     console.log("Produto salvo com sucesso:", novoProduto);
 
@@ -48,7 +51,7 @@ exports.create = async (req, res) => {
     enviarEmail(process.env.ADMIN_EMAIL, "Produto adicionado ao estoque",
       `<h2>Novo Produto Adicionado!</h2>
        <p>Produto <strong>${nome}</strong> adicionado com sucesso ao estoque.</p>
-       ${imagem ? `<p>Imagem: <strong>${imagem}</strong></p>` : ''}`
+       ${image ? `<p>Imagem: <strong>${image}</strong></p>` : ''}`
     ).catch(err => console.error("Erro ao enviar email para admin:", err));
 
     // Envia e-mail para os usuários
@@ -58,7 +61,7 @@ exports.create = async (req, res) => {
       enviarEmail(emailsUsuarios.join(","), "Novo produto na loja!",
         `<h2>Novidade na Loja!</h2>
          <p>Um novo produto foi adicionado: <strong>${nome}</strong>. Confira!</p>
-         ${imagem ? `<p>Imagem: <strong>${imagem}</strong></p>` : ''}`
+         ${image ? `<p>Imagem: <strong>${image}</strong></p>` : ''}`
       ).catch(err => console.error("Erro ao enviar email para usuarios:", err));
     }
 
