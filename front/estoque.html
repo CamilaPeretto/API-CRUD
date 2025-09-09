@@ -8,123 +8,174 @@
   <link rel="shortcut icon" href="../img/carrinho-de-compras.png" type="image/x-icon">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body class="bg-gray-100 min-h-screen font-sans" style="background: linear-gradient(135deg, #d9dfff 0%, #0b7350  100%);">
+<body class="bg-gray-100 min-h-screen font-sans flex flex-col" style="background: linear-gradient(135deg, #d9dfff 0%, #0b7350  100%);">
     
-    <nav class="w-full bg- #0b7350 shadow-md py-4 px-6 flex items-center justify-between">
-      <h1 class="text-4xl md:text-6xl font-extrabold text-teal-900">
-        StokFlow
-      </h1>
-      <div class="flex items-center">
-        <button 
-          onclick="logout()" 
-          class="bg-red-700 hover:bg-red-900 text-white font-bold py-2 px-4 rounded-md transition">
-          Sair
-        </button>
-      </div>
-  </nav>
-    
-<div class="w-full max-w-5xl mx-auto mt-6 flex flex-col gap-8 p-6 md:p-10" >
-  
-  <form id="form-produto" class="w-full max-w-3xl bg-white rounded-lg shadow-md p-6 mb-8 grid gap-4">
-    <input id="nome" type="text" placeholder="Nome do produto"
-      class="border border-gray-300 p-3 rounded-md w-full focus:outline-blue-500" required />
+    <!-- Navbar -->
+<nav class=" top-0 left-0 w-full bg-white/30 backdrop-blur-md shadow-md py-4 px-6 flex items-center justify-between z-50">
+  <!-- Logo -->
+  <h1 class="text-3xl md:text-4xl font-extrabold text-teal-900 drop-shadow-md">
+    StokFlow
+  </h1>
 
-    <input id="descricao" type="text" placeholder="Descrição"
-      class="border border-gray-300 p-3 rounded-md w-full focus:outline-blue-500" required />
-
-    <input id="preco" type="number" placeholder="Preço" min="0.01" step="0.01"
-      class="border border-gray-300 p-3 rounded-md w-full focus:outline-blue-500" required />
-
-    <input id="estoque" type="number" placeholder="Estoque" min="0" step="1"
-      class="border border-gray-300 p-3 rounded-md w-full focus:outline-blue-500" required />
-
-    <select id="categoria" class="border border-gray-300 p-3 rounded-md w-full focus:outline-blue-500" required>
-      <option value="" disabled selected>Selecione a categoria</option>
-      <option value="Cabelos">Cabelos</option>
-      <option value="Unhas">Unhas</option>
-      <option value="Pele">Pele</option>
-      <option value="Maquiagem">Maquiagem</option>
-    </select>
-
-    <input id="input-imagem" type="file" accept="image/*"
-      class="border border-gray-300 p-2 rounded-md w-full focus:outline-blue-500" />
-
-    <img id="preview" src="" alt="Prévia da imagem"
-      class="w-32 h-32 object-cover mt-2 hidden rounded-md border border-gray-300" />
-
-    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-md transition">
-      Adicionar Produto
+  <!-- Botões -->
+  <div class="flex items-center gap-3">
+    <!-- Botão de adicionar -->
+    <button 
+      id="btn-add" 
+      onclick="document.getElementById('modal').classList.remove('hidden')" 
+      class="flex items-center justify-center bg-teal-700 hover:bg-teal-900 text-white font-bold py-2 px-4 rounded-md text-md"
+    >
+      +
     </button>
-  </form>
 
-  <p id="mensagem" class="text-center mt-2 font-semibold text-green-600 min-h-[1.5rem]"></p>
+    <!-- Botão de logout -->
+    <button 
+      onclick="logout()" 
+      class="flex items-center gap-2 bg-teal-700 hover:bg-teal-900 text-white font-bold py-2 px-4 rounded-md transition"
+    >
+      <i data-lucide="log-out"></i>
+      
+    </button>
+  </div>
+</nav>
+    
+  <!-- Main -->
+  <main class="flex-grow mt-24 w-full max-w-6xl mx-auto px-4 md:px-8 flex flex-col gap-12">
+    
+    <section id="dashboard" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Estatísticas -->
+      <div class="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg p-6">
+        <h3 class="font-semibold mb-6 text-xl text-green-800"> Estatísticas</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+          <div class="bg-white/60 rounded-xl p-4 shadow flex items-center gap-8">
+            <span class="text-green-600 text-2xl"></span>
+            <div>
+              <p class="text-sm text-gray-500">Total de Produtos</p>
+              <p id="total-produtos" class="text-xl font-bold text-gray-800">...</p>
+            </div>
+          </div>
+          <div class="bg-white/60 rounded-xl p-4 shadow flex items-center gap-3">
+            <span class="text-red-500 text-2xl"></span>
+            <div>
+              <p class="text-sm text-gray-500">Estoque Baixo (&lt; 5)</p>
+              <p id="estoque-baixo" class="text-xl font-bold text-gray-800">...</p>
+            </div>
+          </div>
+          <div class="bg-white/60 rounded-xl p-4 shadow flex items-center gap-3">
+            <span class="text-yellow-500 text-2xl"></span>
+            <div>
+              <p class="text-sm text-gray-500">Valor Total</p>
+              <p class="text-xl font-bold text-gray-800">R$ <span id="valor-total">...</span></p>
+            </div>
+          </div>
+          <div class="bg-white/60 rounded-xl p-4 shadow flex items-center gap-3">
+            <span class="text-blue-500 text-2xl"></span>
+            <div>
+              <p class="text-sm text-gray-500">Mais Barato</p>
+              <p id="mais-barato" class="text-xl font-bold text-gray-800">...</p>
+            </div>
+          </div>
+          <div class="bg-white/60 rounded-xl p-4 shadow flex items-center gap-3 sm:col-span-2">
+            <span class="text-purple-500 text-2xl"></span>
+            <div>
+              <p class="text-sm text-gray-500">Mais Caro</p>
+              <p id="mais-caro" class="text-xl font-bold text-gray-800">...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Gráfico -->
+      <div class="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg p-6 flex flex-col">
+        <h3 class="font-semibold mb-4 text-xl text-green-800"> Distribuição do Estoque</h3>
+        <canvas id="estoqueChart" class="flex-grow"></canvas>
+      </div>
+    </section>
 
-  <div class="w-full max-w-3xl mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-    <select id="filtroCategoria" class="border border-gray-300 p-3 rounded-md w-full md:w-48 focus:outline-blue-500">
-      <option value="" selected>Todas as categorias</option>
-      <option value="Cabelos">Cabelos</option>
-      <option value="Unhas">Unhas</option>
-      <option value="Pele">Pele</option>
-      <option value="Maquiagem">Maquiagem</option>
-    </select>
+    <!-- Filtros + Busca -->
 
-    <input type="text" id="busca" placeholder="Buscar por nome ou descrição"
-      class="border border-gray-300 p-3 rounded-md flex-grow focus:outline-blue-500" oninput="listarProdutos()" />
+    <h2 class="text-3xl font-extrabold mb-6 text-teal-900">Lista de Produtos</h2>
+    
+    <section class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
-    <select id="filtro" class="border border-gray-300 p-3 rounded-md w-full md:w-60 focus:outline-blue-500"
-      onchange="listarProdutos()">
-      <option value="">Todos</option>
-      <option value="estoque-baixo">Estoque Baixo (&lt; 5)</option>
-      <option value="preco-crescente">Preço: menor para maior</option>
-      <option value="preco-decrescente">Preço: maior para menor</option>
-      <option value="nome-az">Nome: A-Z</option>
-      <option value="nome-za">Nome: Z-A</option>
-    </select>
+      <input type="text" id="busca" placeholder="Buscar por nome ou descrição"
+        class="border border-gray-300 p-3 rounded-md flex-grow focus:outline-teal-600" oninput="listarProdutos()" />
+
+      <select id="filtroCategoria" class="border border-gray-300 p-3 rounded-md w-full md:w-48 focus:outline-teal-600">
+        <option value="" selected>Todas as categorias</option>
+        <option value="Cabelos">Cabelos</option>
+        <option value="Unhas">Unhas</option>
+        <option value="Pele">Pele</option>
+        <option value="Maquiagem">Maquiagem</option>
+      </select>
+
+      
+      <select id="filtro" class="border border-gray-300 p-3 rounded-md w-full md:w-60 focus:outline-teal-600" onchange="listarProdutos()">
+        <option value="">Todos</option>
+        <option value="estoque-baixo">Estoque Baixo (&lt; 5)</option>
+        <option value="preco-crescente">Preço: menor para maior</option>
+        <option value="preco-decrescente">Preço: maior para menor</option>
+        <option value="nome-az">Nome: A-Z</option>
+        <option value="nome-za">Nome: Z-A</option>
+      </select>
+    </section>
+    
+    <!-- Lista de produtos -->
+    <section>
+      
+      <ul id="lista" class="w-full bg-white/70 backdrop-blur-md rounded-2xl shadow divide-y divide-gray-200 overflow-hidden"></ul>
+    </section>
+
+  </main>
+
+
+  <!-- Modal de cadastro -->
+  <div id="modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-8 w-full max-w-lg relative">
+      <button onclick="document.getElementById('modal').classList.add('hidden')" class="absolute top-4 right-4 text-teal-900">✖</button>
+      <h2 class="text-2xl font-bold mb-6 text-center text-teal-900">Adicionar Produto</h2>
+      <form id="form-produto" class="grid gap-4">
+        <input id="nome" type="text" placeholder="Nome do produto"
+          class="border border-gray-300 p-3 rounded-md w-full focus:outline-teal-600" required />
+        <input id="descricao" type="text" placeholder="Descrição"
+          class="border border-gray-300 p-3 rounded-md w-full focus:outline-teal-600" required />
+        <input id="preco" type="number" placeholder="Preço" min="0.01" step="0.01"
+          class="border border-gray-300 p-3 rounded-md w-full focus:outline-teal-600" required />
+        <input id="estoque" type="number" placeholder="Estoque" min="0" step="1"
+          class="border border-gray-300 p-3 rounded-md w-full focus:outline-teal-600" required />
+        <select id="categoria" class="border border-gray-300 p-3 rounded-md w-full focus:outline-teal-600" required>
+          <option value="" disabled selected>Selecione a categoria</option>
+          <option value="Cabelos">Cabelos</option>
+          <option value="Unhas">Unhas</option>
+          <option value="Pele">Pele</option>
+          <option value="Maquiagem">Maquiagem</option>
+        </select>
+        <input id="input-imagem" type="file" accept="image/*"
+          class="border border-gray-300 p-2 rounded-md w-full focus:outline-teal-600" />
+        <img id="preview" src="" alt="Prévia da imagem"
+          class="w-32 h-32 object-cover mt-2 hidden rounded-md border border-gray-300" />
+        <button type="submit" class="bg-teal-700 hover:bg-teal-900 text-white font-semibold py-3 rounded-md transition">
+          Adicionar Produto
+        </button>
+      </form>
+      <p id="mensagem" class="text-center mt-2 font-semibold text-green-600 min-h-[1.5rem]"></p>
+    </div>
   </div>
 
-  <ul id="lista" class="w-full max-w-3xl bg-white rounded-lg shadow divide-y divide-gray-200 overflow-hidden"></ul>
+  <!-- Footer -->
+  <footer class="w-full py-3 mt-14 bg-white/30 backdrop-blur-md font-semibold text-center text-gray-900 text-md">
+    Feito com 💚 por Camila
+  </footer>
 
-  <h2 class="text-3xl font-extrabold mt-12 mb-6 text-gray-900">
-    Dashboard de Estoque
-  </h2>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl w-full">
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h3 class="font-semibold mb-4 text-lg">Estatísticas</h3>
-      <ul class="space-y-2 text-gray-700">
-        <li>
-          <strong>Total de Produtos:</strong>
-          <span id="total-produtos">...</span>
-        </li>
-        <li>
-          <strong>Produtos com Estoque Baixo (&lt; 5):</strong>
-          <span id="estoque-baixo">...</span>
-        </li>
-        <li>
-          <strong>Valor Total em Estoque:</strong> R$
-          <span id="valor-total">...</span>
-        </li>
-        <li>
-          <strong>Produto Mais Barato:</strong>
-          <span id="mais-barato">...</span>
-        </li>
-        <li>
-          <strong>Produto Mais Caro:</strong> <span id="mais-caro">...</span>
-        </li>
-      </ul>
-    </div>
 
-    <div class="bg-white rounded-lg shadow-md p-6 flex flex-col">
-      <h3 class="font-semibold mb-4 text-lg">Distribuição do Estoque</h3>
-      <canvas id="estoqueChart" class="flex-grow"></canvas>
-    </div>
-  </div>
-</div>
 
 
   <script>
+    lucide.createIcons();
     const token = localStorage.getItem("token");
 if (!token) {
   alert("Você precisa estar logado para acessar esta página.");
