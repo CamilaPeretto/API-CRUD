@@ -25,6 +25,10 @@ app.use('/auth', authRoutes);
 app.use('/admin', adminRoutes);
 app.use("/uploads", express.static("uploads"));
 
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "front", "loja.html"));
+});
+
 async function startServer() {
   try {
     await connectDB();
