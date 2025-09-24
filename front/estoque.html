@@ -377,40 +377,29 @@ ${p.image
 
     // ATUALIZAR PRODUTO
     async function atualizarProduto(id) {
-      const nome = document.getElementById(`nome-${id}`).value.trim();
-      const descricao = document
-        .getElementById(`descricao-${id}`)
-        .value.trim();
-      const preco = parseFloat(document.getElementById(`preco-${id}`).value);
-      const estoque = parseInt(
-        document.getElementById(`estoque-${id}`).value
-      );
-      const categoria = document
-        .querySelector(`#nome-${id}`)
-        .parentNode.nextElementSibling.textContent.replace("Categoria:", "")
-        .trim();
-      const fileInput = document.getElementById(`imagem-${id}`);
+  const nome = document.getElementById(`nome-${id}`).value.trim();
+  const descricao = document.getElementById(`descricao-${id}`).value.trim();
+  const preco = parseFloat(document.getElementById(`preco-${id}`).value);
+  const estoque = parseInt(document.getElementById(`estoque-${id}`).value);
 
-      try {
-        const formData = new FormData();
-        formData.append("nome", nome);
-        formData.append("descricao", descricao);
-        formData.append("preco", preco);
-        formData.append("estoque", estoque);
-        formData.append("categoria", categoria);
-        if (fileInput && fileInput.files[0])
-          formData.append("imagem", fileInput.files[0]);
+  try {
+    const formData = new FormData();
+    formData.append("nome", nome);
+    formData.append("descricao", descricao);
+    formData.append("preco", preco);
+    formData.append("estoque", estoque);
 
-        await fetch(`${API}/${id}`, {
-          method: "PUT",
-          headers: { Authorization: `Bearer ${token}` },
-          body: formData,
-        });
-        listarProdutos();
-      } catch (err) {
-        console.error("Erro ao atualizar produto:", err);
-      }
-    }
+    await fetch(`${API}/${id}`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+
+    listarProdutos();
+  } catch (err) {
+    console.error("Erro ao atualizar produto:", err);
+  }
+}
 
     // EXCLUIR PRODUTO
     async function excluirProduto(id) {

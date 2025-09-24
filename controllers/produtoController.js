@@ -75,12 +75,24 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   const { id } = req.params;
-  const { nome, descricao, preco, estoque } = req.body;
+  const { nome, descricao, preco, estoque, categoria } = req.body;
+
   try {
-    const produto = await Produto.findByIdAndUpdate(id, { nome, descricao, preco, estoque }, { new: true });
-    if (!produto) return res.status(404).json({ erro: "Produto não encontrado" });
+    const updateData = { nome, descricao, preco, estoque, categoria };
+
+    if (req.file) {
+      updateData.image = req.file.filename; // imagem nova
+    }
+
+    const produto = await Produto.findByIdAndUpdate(id, updateData, { new: true });
+
+    if (!produto) {
+      return res.status(404).json({ erro: "Produto não encontrado" });
+    }
+
     res.json(produto);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ erro: "Erro ao atualizar produto" });
   }
 };
